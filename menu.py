@@ -55,7 +55,7 @@ class MenuModule:
             raise MenuError("Список блюд должен быть list")
         for d in dishes:
             _validate_dish(d)
-        self._dishes = [dict(d) for d in dishes]  # защитная копия
+        self._dishes = [dict(d) for d in dishes]
         self._inventory = inventory or InventoryStub()
 
     def get_filtered_menu(self, category=None, only_available=False):
