@@ -61,7 +61,7 @@ flowchart TD
 
 ## 6. Канбан-доска
 
-Ссылка на доску: **<ВСТАВЬТЕ_ССЫЛКУ>**
+Ссылка на доску: https://github.com/users/MonstrikUki/projects/3/views/1
 
 ![Канбан-доска: MenuModule в колонке Done](kanban.png)
 
