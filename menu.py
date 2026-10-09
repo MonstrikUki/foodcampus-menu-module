@@ -4,6 +4,7 @@ User Story: Как повар, я хочу фильтровать блюда п�
 чтобы выдавать актуальное меню.
 Интерфейс: get_filtered_menu(category, only_available)
 """
+import math
 
 CATEGORIES = ("суп", "второе", "салат", "напиток", "десерт")
 MAX_CATEGORY_LEN = 50
@@ -42,8 +43,10 @@ def _validate_dish(d):
     if d["category"] not in CATEGORIES:
         raise MenuError(f"Неизвестная категория блюда: {d['category']!r}")
     price = d["price"]
-    if isinstance(price, bool) or not isinstance(price, (int, float)) or price < 0:
-        raise MenuError("Цена должна быть числом >= 0")
+    if isinstance(price, bool) or not isinstance(price, (int, float)):
+        raise MenuError("Цена должна быть числом")
+    if math.isnan(price) or math.isinf(price) or price < 0:
+        raise MenuError("Цена должна быть конечным числом >= 0")
     if not isinstance(d["available"], bool):
         raise MenuError("Поле 'available' должно быть bool")
 
@@ -53,10 +56,14 @@ class MenuModule:
         dishes = _default_dishes() if dishes is None else dishes
         if not isinstance(dishes, list):
             raise MenuError("Список блюд должен быть list")
+        seen_ids = set()
         for d in dishes:
             _validate_dish(d)
+            if d["id"] in seen_ids:
+                raise MenuError(f"Повторяющийся id блюда: {d['id']!r}")
+            seen_ids.add(d["id"])
         self._dishes = [dict(d) for d in dishes]
-        self._inventory = inventory or InventoryStub()
+        self._inventory = inventory if inventory is not None else InventoryStub()
 
     def get_filtered_menu(self, category=None, only_available=False):
         """Вернуть список блюд (копии), отфильтрованных по категории и наличию.
